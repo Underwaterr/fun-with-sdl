@@ -18,7 +18,7 @@ class Texture
     void setRenderer(SDL_Renderer* renderer);
     void setFont(TTF_Font* font);
     void loadFromFile(std::string path);
-    void loadFromRenderedText(std::string textureText, SDL_Color textColor);
+    void loadFromText(std::string text, SDL_Color textColor);
     void free();
     void render(int x, int y);
     int getWidth();

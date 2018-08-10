@@ -1,17 +1,24 @@
+#include <stdio.h>
+#include <string>
+#include <sstream>
+
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
 
 #include "Texture.h"
 
-#include <stdio.h>
-#include <string>
-
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 int personXPosition = 240;
 int personYPosition = 190;
+
+// Timer stuff
+SDL_Color textColorBlack = { 0, 0, 0 };
+SDL_Color textColorWhite = { 255, 255, 255 };
+Uint32 startTime = 0;
+std::stringstream timeText;
 
 // These are function declarations!
 void initializeSDL();
@@ -27,6 +34,7 @@ SDL_Texture* texture = NULL;
 Texture personTexture;
 Texture backgroundTexture;
 Texture textTexture;
+Texture timerTexture;
 
 void initializeSDL()
 {
@@ -55,8 +63,9 @@ void loadMedia()
   font = TTF_OpenFont("fonts/fira-mono.ttf", 32);
   textTexture.setRenderer(renderer);
   textTexture.setFont(font);
-  SDL_Color textColor = { 0, 0, 0, 0 };
-  textTexture.loadFromRenderedText("Have a great day!", textColor);
+  textTexture.loadFromText("Have a great day!", textColorBlack);
+  timerTexture.setRenderer(renderer);
+  timerTexture.setFont(font);
 }
 
 void close()
@@ -95,6 +104,10 @@ int main(int argc, char* args[])
       {
         quit = true;
       }
+      else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)
+      {
+        startTime = SDL_GetTicks();
+      }
     }
 
     // Key state!
@@ -123,10 +136,16 @@ int main(int argc, char* args[])
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
 
+    // Update timer
+    timeText.str("");
+    timeText << SDL_GetTicks() - startTime;
+    timerTexture.loadFromText(timeText.str().c_str(), textColorWhite);
+
     // Render!
     backgroundTexture.render(0,0);
     personTexture.render(personXPosition, personYPosition);
     textTexture.render((SCREEN_WIDTH-textTexture.getWidth())/2, SCREEN_HEIGHT-textTexture.getHeight()); 
+    timerTexture.render(0, 0);
 
     // Update screen
     SDL_RenderPresent(renderer);

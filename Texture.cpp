@@ -37,10 +37,10 @@ void Texture::loadFromFile(std::string path)
   _texture = texture;
 }
 
-void Texture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+void Texture::loadFromText(std::string text, SDL_Color textColor)
 {
   free();
-  SDL_Surface* surface = TTF_RenderText_Solid(_font, textureText.c_str(), textColor);
+  SDL_Surface* surface = TTF_RenderText_Solid(_font, text.c_str(), textColor);
   SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
   _width = surface->w;
   _height = surface->h;
