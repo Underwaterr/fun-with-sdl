@@ -1,0 +1,2 @@
+default: 
+	g++ hello.cpp Texture.cpp -I/Library/Frameworks/SDL2.framework/Headers -I/Library/Frameworks/SDL2_image.framework/Headers -I/Library/Frameworks/SDL2_ttf.framework/Headers -framework SDL2 -framework SDL2_image -framework SDL2_ttf -framework Cocoa
