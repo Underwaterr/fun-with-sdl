@@ -4,6 +4,7 @@ Texture::Texture()
 {
   _texture = NULL;
   _renderer = NULL;
+  _font = NULL;
   _width = 0;
   _height = 0;
 }
@@ -18,12 +19,29 @@ void Texture::setRenderer(SDL_Renderer* renderer)
   _renderer = renderer;
 }
 
+void Texture::setFont(TTF_Font* font)
+{
+  _font = font;
+}
+
 void Texture::loadFromFile(std::string path)
 {
   free();
   SDL_Surface* surface = IMG_Load(path.c_str());
   SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
 
+  _width = surface->w;
+  _height = surface->h;
+  SDL_FreeSurface(surface);
+
+  _texture = texture;
+}
+
+void Texture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+{
+  free();
+  SDL_Surface* surface = TTF_RenderText_Solid(_font, textureText.c_str(), textColor);
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
   _width = surface->w;
   _height = surface->h;
   SDL_FreeSurface(surface);
