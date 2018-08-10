@@ -94,10 +94,26 @@ int main(int argc, char* args[])
 
     // Key state!
     const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-    if(currentKeyStates[SDL_SCANCODE_RIGHT])  { personXPosition++; }
-    if(currentKeyStates[SDL_SCANCODE_LEFT])   { personXPosition--; }
-    if(currentKeyStates[SDL_SCANCODE_UP])     { personYPosition--; }
-    if(currentKeyStates[SDL_SCANCODE_DOWN])   { personYPosition++; }
+    if(currentKeyStates[SDL_SCANCODE_RIGHT] && personXPosition < (SCREEN_WIDTH - personTexture.getWidth())) 
+    {
+      personXPosition++; 
+    }
+
+    if(currentKeyStates[SDL_SCANCODE_LEFT] && personXPosition > 0) 
+    {
+      personXPosition--; 
+    }
+
+    if(currentKeyStates[SDL_SCANCODE_UP] && personYPosition > 0) 
+    {
+      personYPosition--; 
+    }
+
+    if(currentKeyStates[SDL_SCANCODE_DOWN] && personYPosition < (SCREEN_HEIGHT - personTexture.getHeight())) 
+    {
+      personYPosition++; 
+    }
+
 
     // Clear screen
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
