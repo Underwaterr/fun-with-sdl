@@ -7,6 +7,7 @@
 #include <SDL2_ttf/SDL_ttf.h>
 
 #include "Texture.h"
+#include "Timer.h"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -17,8 +18,8 @@ int personYPosition = 190;
 // Timer stuff
 SDL_Color textColorBlack = { 0, 0, 0 };
 SDL_Color textColorWhite = { 255, 255, 255 };
-Uint32 startTime = 0;
 std::stringstream timeText;
+Timer timer;
 
 // These are function declarations!
 void initializeSDL();
@@ -104,14 +105,25 @@ int main(int argc, char* args[])
       {
         quit = true;
       }
-      else if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)
+      else if(e.type == SDL_KEYDOWN)
       {
-        startTime = SDL_GetTicks();
+        if(e.key.keysym.sym == SDLK_RETURN)
+        {
+          if(timer.isStarted())
+          {
+            timer.stop();
+          }
+          else
+          {
+            timer.start();
+          }
+        }
       }
     }
 
     // Key state!
     const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+
     if(currentKeyStates[SDL_SCANCODE_RIGHT] && personXPosition < (SCREEN_WIDTH - personTexture.getWidth())) 
     {
       personXPosition++; 
@@ -138,7 +150,7 @@ int main(int argc, char* args[])
 
     // Update timer
     timeText.str("");
-    timeText << SDL_GetTicks() - startTime;
+    timeText << timer.getTicks() / 1000.f;
     timerTexture.loadFromText(timeText.str().c_str(), textColorWhite);
 
     // Render!
