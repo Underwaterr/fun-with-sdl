@@ -19,7 +19,9 @@ int personYPosition = 190;
 SDL_Color textColorBlack = { 0, 0, 0 };
 SDL_Color textColorWhite = { 255, 255, 255 };
 std::stringstream timeText;
+std::stringstream framesPerSecondText;
 Timer timer;
+Timer framesPerSecondTimer;
 
 // These are function declarations!
 void initializeSDL();
@@ -36,6 +38,7 @@ Texture personTexture;
 Texture backgroundTexture;
 Texture textTexture;
 Texture timerTexture;
+Texture framesPerSecondTexture;
 
 void initializeSDL()
 {
@@ -44,7 +47,7 @@ void initializeSDL()
   window = SDL_CreateWindow("Fun Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
   // Create renderer for window
-  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF); // Initialize with a solid color?
 
   // Be able to load PNG files 
@@ -67,6 +70,8 @@ void loadMedia()
   textTexture.loadFromText("Have a great day!", textColorBlack);
   timerTexture.setRenderer(renderer);
   timerTexture.setFont(font);
+  framesPerSecondTexture.setRenderer(renderer);
+  framesPerSecondTexture.setFont(font);
 }
 
 void close()
@@ -93,6 +98,10 @@ int main(int argc, char* args[])
 {
   initializeSDL();
   loadMedia();
+
+  // FPS Timer
+  framesPerSecondTimer.start();
+  int frameCount = 0;
 
   // Loop
   bool quit = false;
@@ -153,14 +162,22 @@ int main(int argc, char* args[])
     timeText << timer.getTicks() / 1000.f;
     timerTexture.loadFromText(timeText.str().c_str(), textColorWhite);
 
+    // Update FPS timer
+    float averageFramesPerSecond = frameCount / (framesPerSecondTimer.getTicks() / 1000.f);
+    framesPerSecondText.str("");
+    framesPerSecondText << "FPS: " << averageFramesPerSecond;
+    framesPerSecondTexture.loadFromText(framesPerSecondText.str().c_str(), textColorWhite);
+
     // Render!
     backgroundTexture.render(0,0);
     personTexture.render(personXPosition, personYPosition);
-    textTexture.render((SCREEN_WIDTH-textTexture.getWidth())/2, SCREEN_HEIGHT-textTexture.getHeight()); 
+    textTexture.render((SCREEN_WIDTH-textTexture.getWidth())/2, SCREEN_HEIGHT-textTexture.getHeight());
+    framesPerSecondTexture.render(100, 100);
     timerTexture.render(0, 0);
 
     // Update screen
     SDL_RenderPresent(renderer);
+    ++frameCount;
   }
 
   close();
